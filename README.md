@@ -19,5 +19,7 @@ This is an older script that leaves some room for improvements. It places what i
         available memory (%)
       
       
-      
+Note that there is a generous definition of colors that are not used in the script. 
+
+Also, the script controls the fan that you might want to adjust to your own likings, but I found the settings here to allow quiet operation in most normal GPU operations (gaming, movie watching, graphics work, etc..), but cranks up like a Harley when training a new dataset. 
     
