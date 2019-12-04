@@ -1,10 +1,4 @@
 
-'''
-a potentially easier way to do this is
-nvidia-smi --query-gpu=gpu_name,driver_version,temperature.gpu,power.draw,power.limit,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used,fan.speed --format=csv,nounits,noheader
-then split(',')
-'''
-
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
@@ -27,10 +21,12 @@ class app_indicator(Thread):
 
     def __init__(self, threadID, name):
         Thread.__init__(self)
-        self.gpuVitals = []
+        self.gpuVitals = ['','','','','','','','','','','']
         self.count = 0
         self.threadID = threadID
         self.name = name
+        self.menu = gtk.Menu()
+
         self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, \
                          icon_directory + 'icon.png', \
                          appindicator.IndicatorCategory.HARDWARE)
@@ -39,12 +35,16 @@ class app_indicator(Thread):
         self.indicate()
 
     def build_menu(self):
-        menu = gtk.Menu()
+
         item_quit = gtk.MenuItem('Quit')
         item_quit.connect('activate', quit)
-        menu.append(item_quit)
-        menu.show_all()
-        return menu
+        self.menu.append(gtk.MenuItem('GPU Temperature'))
+        self.menu.append(gtk.MenuItem('GPU fan speed'))
+        self.menu.append(gtk.MenuItem('power consumption'))
+        self.menu.append(gtk.MenuItem('capacity utilization'))
+        self.menu.append(gtk.MenuItem('memory used of {0:s} MiB'.format(self.gpuVitals[7])))
+        self.menu.append(item_quit)
+        return self.menu
 
     def update_icon(self):
         #vitals = subprocess.Popen(['nvidia-smi'], bufsize=-1, stdout=subprocess.PIPE)
@@ -84,28 +84,30 @@ class app_indicator(Thread):
         cr.select_font_face('Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
         cr.set_font_size(8)
         cr.set_source_rgb(0.9,0.9,0.9)#(1,1,1)
-        cr.move_to(19, 8)
+        cr.move_to(8, 8)
         cr.show_text('Nvidia ' + self.gpuVitals[0].strip() + '  v' + self.gpuVitals[1].strip())
         cr.set_font_size(10)
         cr.move_to(3, 21)
         cr.show_text(self.gpuVitals[2].strip() + u'\u2103' )
         cr.move_to(29, 21)
-        cr.show_text(self.gpuVitals[10].strip())
-        cr.move_to(60, 21)
-        cr.show_text(self.gpuVitals[3].strip())
+        cr.show_text('{0:s}%'.format(self.gpuVitals[10].strip()))
+        cr.move_to(52, 21)
+        cr.show_text('{0:5.0f}W'.format(float(self.gpuVitals[3].strip())))
         cr.move_to(91, 21)
-        cr.show_text(self.gpuVitals[5].strip())
+        cr.show_text('{0:s}%'.format(self.gpuVitals[5].strip()))
         cr.move_to(120, 21)
-        cr.show_text(self.gpuVitals[8].strip())
+        cr.show_text('{0:.1f}%'.format(100*float(self.gpuVitals[9])/float(self.gpuVitals[7])))
         fresh_icon.write_to_png(icon_directory + 'icon' + str(self.count % 2) + '.png')
         self.indicator.set_icon(icon_directory + 'icon' + str(self.count % 2) + '.png')
 
     def indicate(self):
         a = 1
+        self.update_icon()
         self.indicator = appindicator.Indicator.new(APPINDICATOR_ID, icon_directory + 'icon.png', appindicator.IndicatorCategory.HARDWARE)
         self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.indicator.set_menu(self.build_menu())
         while True:
+            self.menu.show_all()
             self.update_icon()
             self.count+=1
             time.sleep(0.5)
