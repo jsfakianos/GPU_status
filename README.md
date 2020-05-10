@@ -1,5 +1,12 @@
 # GPU Status
-A simple python script to watch the GPU churn away at your numbers. 
+A simple python script to watch the GPU churn away at your numbers. It's useful for optimizing data preparation that is passed to your machine learning models. 
+
+# Requirements
+It was written long ago in Python 2.7, then 3.0, but is atleast compatible to 3.7
+Gtk 3.0
+Thread module 
+subprocess module
+cairo
 
 #### Figure of status bar in action
 ![GPU Status](Screenshot.png)
@@ -20,5 +27,5 @@ This is an older script that leaves some room for improvements. It places what i
       
       
 
-Also, the script controls the fan that you might want to adjust to your own likings, but I found the settings here to allow quiet operation in most normal GPU operations (gaming, movie watching, graphics work, etc..), but cranks up like a Harley when training a new dataset. 
+Also, the script controls the fan that you might want to adjust to your own likings, but I found the settings here to allow quiet operation in most normal GPU operations (gaming, movie watching, graphics work, etc..), but cranks up like a Harley when training on a new dataset. 
     
