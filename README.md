@@ -3,9 +3,13 @@ A simple python script to watch the GPU churn away at your numbers. It's useful 
 
 # Requirements
 It was written long ago in Python 2.7, then 3.0, but is atleast compatible to 3.7
+
 Gtk 3.0
+
 Thread module 
+
 subprocess module
+
 cairo
 
 #### Figure of status bar in action
